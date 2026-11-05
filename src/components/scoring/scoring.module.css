@@ -1,0 +1,665 @@
+/*
+ * The scoring screen, used one-handed in sunlight for hours. The score sits on a
+ * full ultramarine band so it can be read at arm's length, and the mic and keypad
+ * stay pinned under the thumb however long the page gets.
+ */
+
+.screen {
+  min-height: 100svh;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto auto 1fr auto;
+  gap: 14px;
+  max-width: 600px;
+  margin-inline: auto;
+}
+
+/* ── The score ───────────────────────────────────────────────── */
+
+.scoreline {
+  background: var(--c-ultra);
+  color: var(--c-cream);
+  padding: max(12px, env(safe-area-inset-top)) var(--gutter) 18px;
+  border-radius: 0 0 24px 24px;
+  display: grid;
+  gap: 10px;
+}
+
+.scoreTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.mark {
+  font-family: var(--display);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--c-cream);
+  padding-block: 6px;
+}
+
+.cardLink {
+  color: var(--c-cream);
+  font-size: var(--step-small);
+  font-weight: 600;
+  text-underline-offset: 3px;
+  padding-block: 6px;
+}
+
+.scoreMain {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.scoreWho {
+  min-width: 0;
+}
+
+.teamName {
+  display: block;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+  margin-bottom: 4px;
+}
+
+.total {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(3.5rem, 18vw, 5.5rem);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  color: var(--c-marigold);
+}
+
+.total[data-landed] {
+  animation: tick 180ms var(--ease-out);
+}
+
+@keyframes tick {
+  from {
+    transform: scale(1.05);
+  }
+}
+
+.totalWickets {
+  color: var(--c-cream);
+}
+
+.meta {
+  flex: none;
+  display: grid;
+  justify-items: end;
+  gap: 1px;
+  font-size: var(--step-small);
+  color: #dfe1ff;
+}
+
+.meta strong {
+  color: var(--c-cream);
+  font-weight: 700;
+  font-size: 1.05em;
+}
+
+.chaseLine {
+  margin: 0;
+  padding: 8px 14px;
+  border-radius: 12px;
+  background: var(--c-marigold);
+  color: var(--c-night);
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+/* ── This over ───────────────────────────────────────────────── */
+
+.over {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding-inline: var(--gutter);
+}
+
+.overLabel {
+  flex: none;
+  line-height: 40px;
+  font-size: var(--step-small);
+  font-weight: 600;
+  color: var(--ink-muted);
+}
+
+.cells {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.cell {
+  min-width: 40px;
+  height: 40px;
+  padding-inline: 6px;
+  display: grid;
+  place-items: center;
+  background: var(--surface);
+  border-radius: 12px;
+  font-family: var(--display);
+  font-weight: 800;
+}
+
+.cellEmpty {
+  background: transparent;
+  box-shadow: inset 0 0 0 2px var(--surface);
+  color: transparent;
+}
+
+.cellWicket {
+  background: var(--c-vermilion);
+  color: #fff8e8;
+}
+
+.cellExtra {
+  color: var(--extra);
+}
+
+.cellBoundary {
+  background: var(--c-pitch);
+  color: #fff8e8;
+}
+
+.cellSix {
+  background: var(--c-marigold);
+  color: var(--c-night);
+}
+
+.cellNew {
+  animation: land var(--base) var(--ease-out);
+}
+
+@keyframes land {
+  from {
+    transform: scale(0.82);
+    opacity: 0;
+  }
+}
+
+/* ── The last ball, and everything the app has to ask ───────── */
+
+.crease {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2px;
+  align-content: start;
+  padding-inline: var(--gutter);
+}
+
+.chip,
+.ask {
+  background: var(--surface);
+  border-radius: 18px;
+  padding: 14px 16px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.chip {
+  animation: rise var(--base) var(--ease-out);
+}
+
+@keyframes rise {
+  from {
+    transform: translateY(8px);
+    opacity: 0;
+  }
+}
+
+.chipHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.chipVerdict {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: var(--step-lead);
+  letter-spacing: -0.03em;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.chipSaid {
+  font-size: var(--step-small);
+  color: var(--ink-muted);
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.chipUnsure {
+  color: var(--extra);
+}
+
+.undo {
+  flex: none;
+  min-height: 44px;
+  background: var(--raised);
+  border-radius: 999px;
+  padding: 8px 18px;
+  font-size: var(--step-small);
+  font-weight: 700;
+  transition: transform var(--fast) var(--ease-out);
+}
+
+.undo:active {
+  transform: scale(0.95);
+}
+
+.askTitle {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: var(--step-lead);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.stepTitle {
+  font-weight: 600;
+}
+
+.options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.option {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  background: var(--raised);
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 10px 18px;
+  font-weight: 600;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+  transition: transform var(--fast) var(--ease-out);
+}
+
+.option:active {
+  transform: scale(0.96);
+}
+
+.option:disabled {
+  opacity: 0.5;
+}
+
+.optionPrimary {
+  background: var(--c-vermilion);
+  color: #fff8e8;
+}
+
+.quiet {
+  justify-self: start;
+  min-height: 44px;
+  font-size: var(--step-small);
+  font-weight: 600;
+  color: var(--ink-muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.result {
+  background: var(--c-pitch);
+  color: #fff8e8;
+  border-radius: 20px;
+  padding: 18px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+  animation: rise var(--base) var(--ease-out);
+}
+
+.resultLine {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(1.75rem, 1.2rem + 3vw, 2.5rem);
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  color: var(--c-marigold);
+  overflow-wrap: anywhere;
+}
+
+.inningsList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.inningsList li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-block: 6px;
+  box-shadow: inset 0 -1px 0 rgb(255 248 232 / 0.25);
+}
+
+.inningsList span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.result .option:not(.optionPrimary) {
+  background: rgb(255 248 232 / 0.16);
+  color: #fff8e8;
+}
+
+/* ── At the crease ───────────────────────────────────────────── */
+
+.player {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 12px;
+  padding: 9px 0;
+}
+
+.player + .player {
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--ink) 12%, transparent);
+}
+
+.player > span:first-child {
+  overflow-wrap: anywhere;
+}
+
+.onStrike {
+  font-weight: 700;
+}
+
+.onStrike::after {
+  content: "*";
+  color: var(--wicket);
+  margin-left: 3px;
+  font-weight: 800;
+}
+
+.figures {
+  color: var(--ink-muted);
+  white-space: nowrap;
+}
+
+.sectionLabel {
+  font-size: var(--step-small);
+  font-weight: 700;
+  color: var(--ink-muted);
+  margin: 12px 0 0;
+}
+
+/* ── The mic and the keys, pinned at the thumb ──────────────── */
+
+.foot {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+  padding: 10px var(--gutter) max(12px, env(safe-area-inset-bottom));
+  background: var(--ground);
+  border-radius: 24px 24px 0 0;
+  box-shadow: 0 -10px 24px -14px rgb(23 19 74 / 0.35);
+}
+
+.micRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.mic {
+  --size: clamp(88px, 25vw, 112px);
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  background: var(--mic);
+  color: var(--mic-ink);
+  font-family: var(--display);
+  font-weight: 800;
+  display: grid;
+  place-items: center;
+  touch-action: none;
+  box-shadow: 0 14px 26px -12px rgb(150 30 12 / 0.75);
+  transition:
+    transform var(--fast) var(--ease-out),
+    background-color var(--fast) var(--ease-out);
+}
+
+.micRecording {
+  background: var(--mic-on);
+  color: var(--mic-on-ink);
+  transform: scale(1.06);
+}
+
+.micThinking {
+  background: var(--raised);
+  color: var(--ink-muted);
+  box-shadow: none;
+}
+
+.micDisabled {
+  background: var(--raised);
+  color: var(--ink-faint);
+  box-shadow: none;
+}
+
+.mic:active:not(.micDisabled) {
+  transform: scale(0.97);
+}
+
+/* A level ring, so the scorer can see it is hearing them. */
+.ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--c-marigold);
+  opacity: 0.4;
+  transform: scale(var(--level, 1));
+  transition: transform 90ms linear;
+  pointer-events: none;
+}
+
+.micWrap {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.micLabel {
+  display: block;
+  padding-inline: 14%;
+  text-align: center;
+  line-height: 1.12;
+  text-wrap: balance;
+  /* Ten languages, one button: the longest wraps rather than spills. */
+  font-size: clamp(0.8125rem, 0.65rem + 0.5vw, 1rem);
+}
+
+.hint {
+  margin: 0;
+  font-size: var(--step-small);
+  font-weight: 500;
+  color: var(--ink-muted);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.hintError {
+  color: var(--wicket);
+}
+
+.pad {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.key {
+  height: 48px;
+  background: var(--surface);
+  border-radius: 12px;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 1.0625rem;
+  transition: transform var(--fast) var(--ease-out);
+}
+
+.key:active:not(:disabled) {
+  transform: scale(0.94);
+}
+
+.key:disabled {
+  opacity: 0.45;
+}
+
+.keyWicket {
+  background: var(--c-vermilion);
+  color: #fff8e8;
+}
+
+.keyExtra {
+  color: var(--extra);
+}
+
+.keyFour {
+  background: var(--c-pitch);
+  color: #fff8e8;
+}
+
+.keySix {
+  background: var(--c-marigold);
+  color: var(--c-night);
+}
+
+.options2 {
+  margin-top: 16px;
+  font-size: var(--step-small);
+}
+
+.options2 summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--ink-muted);
+  padding-block: 8px;
+}
+
+.options2 .options {
+  padding-top: 6px;
+}
+
+/* ── States ──────────────────────────────────────────────────── */
+
+.loading,
+.fail {
+  display: grid;
+  place-content: center;
+  gap: 10px;
+  min-height: 60svh;
+  text-align: center;
+  padding: var(--gutter);
+}
+
+/* ── Commentary ──────────────────────────────────────────────── */
+
+.feedHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.speakToggle {
+  min-height: 36px;
+  font-size: var(--step-small);
+  font-weight: 700;
+  color: var(--ink-muted);
+  padding: 4px 14px;
+  border-radius: 999px;
+  background: var(--surface);
+}
+
+.speakOn {
+  background: var(--c-pitch);
+  color: #fff8e8;
+}
+
+.feed {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 0;
+}
+
+.feedLine {
+  margin: 0;
+  color: var(--ink-muted);
+  padding: 7px 0;
+  overflow-wrap: anywhere;
+}
+
+.feed .feedLine:first-child {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.feedLine + .feedLine {
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--ink) 10%, transparent);
+}
+
+/* ── Rain ────────────────────────────────────────────────────── */
+
+.rain {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--surface);
+}
+
+.rainField {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 84px;
+  align-items: center;
+  gap: 10px;
+  font-size: var(--step-small);
+  font-weight: 600;
+}
+
+.rainInput {
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  background: var(--raised);
+  /* 16px, or iOS zooms the page on focus. */
+  font-size: 16px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.rainInput:focus {
+  outline: none;
+  border-color: var(--c-ultra);
+}

@@ -1,0 +1,239 @@
+/*
+ * Scorecards and career figures. Figures are right-aligned in tabular numerals,
+ * and a table wider than a phone scrolls inside its own box, not the page.
+ */
+
+.page {
+  max-width: 720px;
+  margin-inline: auto;
+  padding: max(20px, env(safe-area-inset-top)) var(--gutter)
+    max(48px, env(safe-area-inset-bottom));
+  display: grid;
+  gap: 20px;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  min-height: 100svh;
+}
+
+.back {
+  font-family: var(--display);
+  font-weight: 800;
+  padding-block: 8px;
+  color: var(--ink);
+  text-decoration: none;
+  justify-self: start;
+}
+
+.back:hover {
+  color: var(--ink);
+}
+
+.title {
+  font-size: clamp(2.5rem, 1.6rem + 5vw, 4rem);
+  color: var(--c-ultra);
+  overflow-wrap: anywhere;
+}
+
+@media (prefers-color-scheme: dark) {
+  .title {
+    color: var(--c-marigold);
+  }
+}
+
+.banner {
+  background: var(--c-ultra);
+  color: var(--c-cream);
+  border-radius: 22px;
+  padding: clamp(18px, 4vw, 28px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+}
+
+.bannerTitle {
+  font-size: clamp(1.875rem, 1.2rem + 3.6vw, 3rem);
+  color: var(--c-marigold);
+  overflow-wrap: anywhere;
+}
+
+.bannerSub {
+  margin: 0;
+  font-size: var(--step-small);
+  color: #dfe1ff;
+  overflow-wrap: anywhere;
+}
+
+.bannerScores {
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.bannerScores li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-block: 6px;
+  box-shadow: inset 0 1px 0 rgb(255 244 220 / 0.25);
+}
+
+.bannerScores span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.inningsCard {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 18px;
+  background: var(--surface);
+  border-radius: 22px;
+  padding: clamp(16px, 3vw, 24px);
+}
+
+.inningsTitle {
+  font-size: clamp(1.5rem, 1.1rem + 2vw, 2.25rem);
+  overflow-wrap: anywhere;
+}
+
+.tableScroll {
+  overflow-x: auto;
+}
+
+.strong {
+  color: var(--ink) !important;
+  font-weight: 700;
+}
+
+.marks {
+  text-align: left !important;
+  color: var(--ink) !important;
+  white-space: pre-wrap !important;
+}
+
+.overs summary {
+  cursor: pointer;
+  font-weight: 700;
+  padding-block: 8px;
+}
+
+.subtitle {
+  color: var(--ink-muted);
+  font-size: var(--step-small);
+  margin: 6px 0 0;
+}
+
+/* The headline: what this player has actually done. */
+.headline {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.figure {
+  display: grid;
+  gap: 2px;
+}
+
+.figureValue {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(2.25rem, 10vw, 3.25rem);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  color: var(--c-vermilion);
+}
+
+.figureLabel {
+  font-size: var(--step-small);
+  color: var(--ink-muted);
+}
+
+.sectionLabel {
+  font-size: var(--step-small);
+  color: var(--ink-faint);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+
+.table th {
+  font-family: var(--text);
+  font-weight: 700;
+  font-size: 0.8125rem;
+  color: var(--ink-muted);
+  text-align: right;
+  padding: 0 0 8px 12px;
+  white-space: nowrap;
+}
+
+.table th:first-child,
+.table td:first-child {
+  padding-left: 0;
+}
+
+.table th:first-child {
+  text-align: left;
+}
+
+.table td {
+  padding: 11px 0 11px 12px;
+  text-align: right;
+  color: var(--ink-muted);
+  white-space: nowrap;
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--ink) 12%, transparent);
+}
+
+.table td:first-child {
+  text-align: left;
+  color: var(--ink);
+  font-weight: 600;
+  /* Names wrap; only the figures hold their line. */
+  white-space: normal;
+  overflow-wrap: anywhere;
+  min-width: 9em;
+}
+
+.table a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.table a:hover {
+  text-decoration: underline;
+}
+
+/* The total row: the identity and the total in full ink. */
+.totalRow td {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.out {
+  font-weight: 400;
+  color: var(--ink-muted);
+  font-size: 0.8125rem;
+}
+
+.notOut {
+  color: var(--live);
+}
+
+.empty {
+  color: var(--ink-faint);
+  font-size: var(--step-small);
+}
+
+.pair {
+  display: grid;
+  gap: 28px;
+}
+
+@media (min-width: 640px) {
+  .pair {
+    grid-template-columns: 1fr 1fr;
+  }
+}

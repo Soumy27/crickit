@@ -1,0 +1,156 @@
+.page {
+  max-width: 600px;
+  margin-inline: auto;
+  padding: max(20px, env(safe-area-inset-top)) var(--gutter)
+    max(32px, env(safe-area-inset-bottom));
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+}
+
+.back {
+  justify-self: start;
+  font-family: var(--display);
+  font-weight: 800;
+  text-decoration: none;
+  color: var(--ink);
+  padding-block: 8px;
+}
+
+.title {
+  font-size: clamp(2.5rem, 1.6rem + 5vw, 4rem);
+  color: var(--c-ultra);
+}
+
+@media (prefers-color-scheme: dark) {
+  .title {
+    color: var(--c-marigold);
+  }
+}
+
+.field {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 6px;
+  align-content: start;
+}
+
+.label {
+  font-size: var(--step-small);
+  font-weight: 700;
+  color: var(--ink);
+  padding: 0;
+}
+
+.input,
+.area,
+.select {
+  background: var(--surface);
+  border: 2px solid transparent;
+  border-radius: 14px;
+  padding: 12px 14px;
+  /* 16px or more, or iOS zooms the page on focus. */
+  font-size: max(16px, var(--step-body));
+  width: 100%;
+  transition: border-color var(--fast) var(--ease-out);
+}
+
+.input::placeholder,
+.area::placeholder {
+  color: var(--ink-faint);
+}
+
+.input:focus,
+.area:focus,
+.select:focus {
+  outline: none;
+  border-color: var(--c-ultra);
+}
+
+.area {
+  min-height: 150px;
+  line-height: 1.6;
+  resize: vertical;
+}
+
+.pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.help {
+  margin: 0;
+  font-size: var(--step-small);
+  color: var(--ink-muted);
+}
+
+.formats {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.formats legend {
+  margin-bottom: 6px;
+}
+
+.format {
+  position: relative;
+  min-height: 52px;
+  display: grid;
+  place-items: center;
+  padding: 8px 12px;
+  text-align: center;
+  background: var(--surface);
+  border-radius: 14px;
+  font-family: var(--display);
+  font-weight: 800;
+  cursor: pointer;
+  transition:
+    background-color var(--fast) var(--ease-out),
+    color var(--fast) var(--ease-out);
+}
+
+.format[data-on] {
+  background: var(--c-ultra);
+  color: var(--c-cream);
+}
+
+.format input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.format:has(input:focus-visible) {
+  outline: 2px solid var(--c-vermilion);
+  outline-offset: 2px;
+}
+
+.submit {
+  background: var(--c-vermilion);
+  color: #fff8e8;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: var(--step-lead);
+  border-radius: 999px;
+  padding: 18px;
+  text-align: center;
+  box-shadow: 0 14px 26px -14px rgb(150 30 12 / 0.8);
+  transition: transform var(--fast) var(--ease-out);
+}
+
+.submit:active {
+  transform: scale(0.98);
+}
+
+.error {
+  margin: 0;
+  color: var(--wicket);
+  font-weight: 600;
+}

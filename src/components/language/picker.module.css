@@ -1,0 +1,190 @@
+/*
+ * The first screen. It is seen once, so it is allowed to be the one place in
+ * the app with a flourish — everywhere else the scorer is mid-over and any
+ * motion is in the way.
+ */
+
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  --ink: var(--c-cream);
+  --ink-muted: #dfe1ff;
+  --ink-faint: #c9ccff;
+  --ground: var(--c-ultra);
+  --surface: #1a24a3;
+  --live: var(--c-marigold);
+  background: var(--c-ultra);
+  color: var(--ink);
+  display: grid;
+  place-items: center;
+  padding: max(24px, env(safe-area-inset-top)) var(--gutter)
+    max(24px, env(safe-area-inset-bottom));
+  overflow-y: auto;
+}
+
+.panel {
+  width: min(900px, 100%);
+  display: grid;
+  gap: clamp(28px, 5vh, 48px);
+  align-content: center;
+}
+
+.mark {
+  margin: 0 0 18px;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: var(--step-small);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--live);
+}
+
+.title {
+  font-size: clamp(2rem, 1.3rem + 2.9vw, 3.25rem);
+  text-transform: uppercase;
+  text-wrap: balance;
+  margin: 0;
+}
+
+.title:focus-visible {
+  outline: 2px solid var(--live);
+  outline-offset: 6px;
+}
+
+.note {
+  margin: 18px 0 0;
+  max-width: 44ch;
+  color: var(--ink-muted);
+  font-size: var(--step-small);
+}
+
+.grid {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 2px;
+  /* Ten of them: two across on a phone, five on a wide screen — either way
+     the last row is full and no cell is left showing the grid behind it. */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  background: color-mix(in srgb, var(--ink) 9%, transparent);
+}
+
+@media (min-width: 720px) {
+  .grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
+.cell {
+  display: grid;
+  background: var(--ground);
+  /* 40ms apart: one cascade, not a queue. */
+  animation: cellIn 260ms var(--ease-out) both;
+  animation-delay: calc(var(--i) * 40ms + 80ms);
+}
+
+@keyframes cellIn {
+  from {
+    opacity: 0;
+    /* Never from scale(0) — nothing arrives out of nothing. */
+    transform: translateY(10px) scale(0.97);
+  }
+}
+
+.tile {
+  display: grid;
+  gap: 6px;
+  align-content: start;
+  justify-items: start;
+  text-align: left;
+  padding: clamp(18px, 3vw, 26px) clamp(14px, 2vw, 20px);
+  width: 100%;
+  transition:
+    background 160ms var(--ease-out),
+    transform 160ms var(--ease-out);
+}
+
+/* Touch devices fire hover on tap, so gate it. */
+@media (hover: hover) and (pointer: fine) {
+  .tile:hover {
+    background: var(--surface);
+  }
+
+  .tile:hover .native {
+    color: var(--live);
+  }
+}
+
+.tile:active {
+  transform: scale(0.97);
+}
+
+.native {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.125rem);
+  letter-spacing: -0.03em;
+  line-height: 1.3;
+  transition: color 160ms var(--ease-out);
+}
+
+.english {
+  font-size: var(--step-small);
+  color: var(--ink-faint);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cell {
+    animation: none;
+  }
+
+  .tile:active {
+    transform: none;
+  }
+}
+
+/* ------------------------------------------------- the later switch ----- */
+
+/*
+ * The real <select> sits invisibly over its own label, so the control looks
+ * like the rest of the chrome while still being the platform's own picker —
+ * which on a phone is a wheel the scorer already knows how to use.
+ */
+.switch {
+  position: relative;
+  display: inline-grid;
+  align-items: center;
+  cursor: pointer;
+}
+
+.switchSelect {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  /* Big enough to hit with a thumb even where the face is small text. */
+  min-height: 44px;
+}
+
+.switchFace {
+  font-family: var(--display);
+  font-size: var(--step-small);
+  color: var(--ink-muted);
+  transition: color 160ms var(--ease-out);
+  pointer-events: none;
+}
+
+.switch:hover .switchFace,
+.switchSelect:focus-visible + .switchFace {
+  color: var(--ink);
+}
+
+.switchSelect:focus-visible + .switchFace {
+  outline: 2px solid var(--live);
+  outline-offset: 4px;
+  border-radius: 2px;
+}

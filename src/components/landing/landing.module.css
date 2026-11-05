@@ -1,0 +1,1985 @@
+/*
+ * The landing page: a poster run. Each section is one flat field of ink, and the
+ * ball is the only thing with a shadow. Fields re-point the app's text tokens,
+ * so anything inside them, the language switch included, follows the field.
+ */
+
+.fieldUltra,
+.delivery {
+  --ink: var(--c-cream);
+  --ink-muted: #dfe1ff;
+  --ink-faint: #c9ccff;
+  --ground: var(--c-night);
+  background: var(--c-ultra);
+  color: var(--ink);
+}
+
+.fieldCream {
+  --ink: var(--c-night);
+  --ink-muted: #474270;
+  --ground: var(--c-cream);
+  background: var(--c-cream);
+  color: var(--ink);
+}
+
+.fieldNight {
+  --ink: var(--c-cream);
+  --ink-muted: #cfcbef;
+  --ground: var(--c-night);
+  background: var(--c-night);
+  color: var(--ink);
+}
+
+.bar,
+.deliveryCopy,
+.statementBox,
+.section,
+.ledgerInner,
+.trySection,
+.drumSticky,
+.recent,
+.close,
+.foot {
+  --page: min(1180px, 100% - 2 * var(--gutter));
+}
+
+/* ---------------------------------------------------------- delivery ---- */
+
+.delivery {
+  position: relative;
+  height: 280svh;
+}
+
+/* A flat painted sun behind the ball, the one poster shape on the page. */
+.sun {
+  --size: min(62vmin, 620px);
+  position: absolute;
+  z-index: 1;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  background: var(--c-marigold);
+  right: max(2vw, calc(50vw - 640px));
+  top: 50%;
+  margin-top: calc(var(--size) / -2);
+}
+
+@media (max-width: 699px) {
+  .sun {
+    --size: 58vw;
+    right: -12vw;
+    top: auto;
+    bottom: 3svh;
+    margin-top: 0;
+  }
+}
+
+.deliverySticky {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: clip;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.bar {
+  position: relative;
+  z-index: 3;
+  width: var(--page);
+  margin-inline: auto;
+  padding: max(18px, env(safe-area-inset-top)) 0 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.wordmark {
+  font-family: var(--display);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  font-size: var(--step-lead);
+}
+
+.barNav {
+  display: flex;
+  align-items: center;
+  gap: clamp(16px, 3vw, 28px);
+  font-size: var(--step-small);
+}
+
+.barNav a {
+  color: var(--ink-muted);
+  text-decoration: none;
+  padding-block: 12px;
+  transition: color var(--fast) var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .barNav a:hover {
+    color: var(--ink);
+  }
+}
+
+.deliveryCopy {
+  position: relative;
+  z-index: 3;
+  width: var(--page);
+  margin-inline: auto;
+  align-self: center;
+  padding-bottom: 6svh;
+}
+
+.heroTitle {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(2.75rem, 1.2rem + 6.4vw, 6rem);
+  letter-spacing: -0.04em;
+  line-height: 0.95;
+  text-transform: uppercase;
+  text-wrap: balance;
+  max-width: 11ch;
+  margin: 0;
+  color: var(--c-marigold);
+}
+
+.heroLede {
+  margin: clamp(20px, 3vh, 32px) 0 0;
+  max-width: 44ch;
+  font-size: var(--step-body);
+}
+
+.heroActions {
+  margin-top: clamp(20px, 3vh, 32px);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 22px;
+}
+
+.primary {
+  display: inline-block;
+  background: var(--c-marigold);
+  color: var(--c-night);
+  font-family: var(--display);
+  font-weight: 800;
+  border-radius: 999px;
+  padding: 16px 32px;
+  text-decoration: none;
+  transition: transform var(--fast) var(--ease-out);
+}
+
+.primary:active {
+  transform: scale(0.97);
+}
+
+.secondary {
+  color: var(--ink);
+  padding-block: 12px;
+  text-underline-offset: 4px;
+}
+
+.heroNote {
+  margin: 14px 0 0;
+  max-width: 44ch;
+  font-size: var(--step-small);
+  color: var(--ink-muted);
+}
+
+.deliveryBall:active {
+  cursor: grabbing;
+}
+
+/* The ball's shadow on the pitch, and the dust it throws up when it lands. */
+.pitchShadow {
+  position: absolute;
+  z-index: 1;
+  left: calc(50% + 9vw);
+  top: calc(50% + 23svh + min(30vmin, 300px));
+  width: min(44vmin, 440px);
+  height: min(7vmin, 70px);
+  margin-left: calc(min(44vmin, 440px) / -2);
+  border-radius: 50%;
+  background: rgb(8 6 50 / 0.42);
+  opacity: 0;
+  visibility: hidden;
+}
+
+.dust {
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  width: 34px;
+  height: 34px;
+  margin: -17px;
+  border-radius: 50%;
+  background: var(--c-marigold);
+  opacity: 0;
+}
+
+.spinHint {
+  position: absolute;
+  left: 50%;
+  bottom: 9%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: var(--step-small);
+  color: var(--c-night);
+}
+
+.deliveryBall {
+  --size: min(118vmin, 1180px);
+  position: absolute;
+  z-index: 2;
+  width: var(--size);
+  height: var(--size);
+  left: calc(50% - var(--size) / 2);
+  top: calc(50% - var(--size) / 2);
+  cursor: grab;
+  /* Sideways drags spin the ball; up and down still scroll the page. */
+  touch-action: pan-y;
+  user-select: none;
+  /* Far up the pitch: what the scroll brings toward you. */
+  transform: translate(25vw, -11svh) scale(0.34);
+}
+
+@media (max-width: 699px) {
+  .pitchShadow {
+    left: calc(50% + 12vw);
+    top: calc(50% + 30svh + 26vmin);
+  }
+
+  .deliveryBall {
+    transform: translate(33vw, 38svh) scale(0.24);
+  }
+
+  .delivery {
+    height: 240svh;
+  }
+}
+
+.ball {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.ballHost {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 400ms var(--ease-out);
+}
+
+.ballHost[data-ready] {
+  opacity: 1;
+}
+
+.ballTilt,
+.ballDrop {
+  width: 100%;
+  height: 100%;
+}
+
+/* What every visitor sees first, and all a device with no WebGL ever sees. */
+.ballDrawing {
+  position: absolute;
+  /* Matches the rendered sphere's size in the WebGL camera. */
+  inset: 5.5%;
+  border-radius: 50%;
+  background:
+    linear-gradient(112deg, transparent 48.5%, #ede2cc 48.5% 49.2%, #6c1410 49.2% 50.8%, #ede2cc 50.8% 51.5%, transparent 51.5%),
+    radial-gradient(circle at 34% 28%, #e0523f, #b5211a 50%, #5a0f0b 100%);
+  transition: opacity 400ms var(--ease-out);
+}
+
+.ballDrawing[data-hidden] {
+  opacity: 0;
+}
+
+.leather {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: var(--c-vermilion);
+  clip-path: circle(0% at 50% 50%);
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------- statement ---- */
+
+.statement {
+  position: relative;
+  background: var(--c-vermilion);
+  color: var(--c-cream);
+  padding-block: clamp(72px, 16svh, 180px) clamp(96px, 20svh, 220px);
+}
+
+/* Doubled: React Bits' own stylesheet sets a margin on this element too. */
+.statementBox.statementBox {
+  width: var(--page);
+  margin: 0 auto;
+}
+
+.statementText {
+  font-family: var(--display);
+  font-size: clamp(1.875rem, 1rem + 3.6vw, 4rem);
+  font-weight: 800;
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+  max-width: 24ch;
+}
+
+/* The seam of the ball, run across the page as the edge of the section. */
+.seam {
+  position: absolute;
+  inset: auto 0 0;
+  height: 22px;
+  background:
+    repeating-linear-gradient(112deg, transparent 0 11px, var(--paper) 11px 14px, transparent 14px 22px) 0 0 / auto 8px no-repeat,
+    repeating-linear-gradient(68deg, transparent 0 11px, var(--paper) 11px 14px, transparent 14px 22px) 0 100% / auto 8px no-repeat,
+    #a32311;
+  background-size: 100% 8px, 100% 8px, auto;
+}
+
+/* -------------------------------------------------------------- book ---- */
+
+.bookScene {
+  --ink: var(--c-night);
+  --ink-muted: #3b3672;
+  position: relative;
+  height: 520svh;
+  background: var(--c-marigold);
+  color: var(--ink);
+}
+
+.bookSticky {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: clip;
+  display: grid;
+  align-items: center;
+}
+
+.bookStage {
+  --w: min(82vw, 440px, 58svh);
+  --h: calc(var(--w) * 1.3);
+  position: relative;
+  height: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) auto;
+  align-items: center;
+  perspective: 1800px;
+  perspective-origin: 50% 45%;
+  padding-block: 4svh;
+}
+
+.bookBody {
+  position: relative;
+  width: var(--w);
+  height: var(--h);
+  margin-left: max(var(--gutter), calc(50vw - var(--w) / 2));
+  transform-style: preserve-3d;
+}
+
+/* The block of pages under the top one, and the board behind them. */
+.bookBody::before {
+  content: "";
+  position: absolute;
+  inset: 6px -9px -10px 0;
+  border-radius: 2px 7px 7px 2px;
+  background:
+    repeating-linear-gradient(to right, transparent 0 2px, rgb(34 32 28 / 0.2) 2px 3px),
+    color-mix(in srgb, var(--paper) 78%, #000);
+  transform: translateZ(-3px);
+}
+
+.pageBase,
+.front,
+.back {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 2px 6px 6px 2px;
+  background: var(--paper);
+}
+
+.pageBase {
+  box-shadow: 0 34px 70px -28px rgb(0 0 0 / 0.75);
+}
+
+.turning {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform-origin: 0 50%;
+}
+
+.front,
+.back {
+  backface-visibility: hidden;
+}
+
+.back {
+  transform: rotateY(180deg);
+  border-radius: 6px 2px 2px 6px;
+  background:
+    linear-gradient(to left, rgb(34 32 28 / 0.2), transparent 16%),
+    repeating-linear-gradient(to bottom, transparent 0 31px, var(--rule) 31px 32px),
+    var(--paper);
+}
+
+.shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, rgb(0 0 0 / 0.55), transparent 62%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.cover {
+  background: var(--c-vermilion);
+  color: var(--paper);
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 6px;
+  box-shadow: inset 8px 0 14px -8px rgb(0 0 0 / 0.6);
+}
+
+.coverStitch {
+  position: absolute;
+  inset: 16px;
+  border: 2px dashed color-mix(in srgb, var(--paper) 72%, transparent);
+  border-radius: 3px;
+}
+
+.coverTitle {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: calc(var(--w) * 0.15);
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.coverSub {
+  font-size: var(--step-small);
+}
+
+.paper {
+  height: 100%;
+  padding: clamp(16px, calc(var(--w) * 0.06), 28px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 14px;
+  color: var(--paper-ink);
+  font-size: clamp(0.8125rem, calc(var(--w) * 0.033), 0.9375rem);
+  background:
+    linear-gradient(to right, rgb(34 32 28 / 0.14), transparent 7%),
+    var(--paper);
+}
+
+.paperHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 10px;
+  box-shadow: inset 0 -2px 0 var(--rule-strong);
+  font-family: var(--display);
+}
+
+.paperHead span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.paperHead strong {
+  flex: none;
+  font-size: 1.5em;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.paperFoot {
+  margin: 0;
+  color: var(--paper-faint);
+  font-size: 0.875em;
+}
+
+.ruled {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  align-self: start;
+}
+
+.ruled li {
+  display: grid;
+  grid-template-columns: 2.5em minmax(0, 4.4em) minmax(0, 1fr) 1.8em;
+  align-items: baseline;
+  gap: 6px;
+  padding-block: 0.42em;
+  box-shadow: inset 0 -1px 0 var(--rule);
+}
+
+.ruledOver {
+  color: var(--paper-faint);
+}
+
+.ruledWho {
+  font-weight: 600;
+}
+
+.ruledSaid {
+  color: var(--paper-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ruledMark {
+  font-family: var(--display);
+  font-weight: 700;
+  text-align: right;
+}
+
+.ruledBig {
+  color: var(--paper-live);
+  font-size: 1.2em;
+}
+
+.card {
+  width: 100%;
+  border-collapse: collapse;
+  align-self: start;
+}
+
+.card th,
+.card td {
+  text-align: right;
+  font-weight: 400;
+  padding: 0.5em 0 0.5em 0.5em;
+  box-shadow: inset 0 -1px 0 var(--rule);
+}
+
+.card thead th {
+  font-family: var(--display);
+  font-weight: 700;
+  color: var(--paper-faint);
+}
+
+.card thead th:first-child,
+.card tbody th {
+  text-align: left;
+  padding-left: 0;
+}
+
+.card tbody th {
+  font-weight: 600;
+}
+
+.career {
+  margin: 0;
+  align-self: start;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5em 1em;
+}
+
+.career dt {
+  color: var(--paper-muted);
+}
+
+.career dd {
+  margin: 2px 0 0;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 2.2em;
+  letter-spacing: -0.035em;
+  line-height: 1;
+}
+
+.captions {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  min-height: 7.5em;
+  width: var(--w);
+  margin-left: max(var(--gutter), calc(50vw - var(--w) / 2));
+  margin-top: 18px;
+}
+
+.caption {
+  position: absolute;
+  inset: 0 0 auto;
+}
+
+.captionTitle {
+  font-size: var(--step-lead);
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.captionBody {
+  margin: 8px 0 0;
+  font-size: var(--step-small);
+  color: var(--ink-muted);
+}
+
+/* Wide: an open spread, and the captions are printed on the left-hand page. */
+@media (min-width: 900px) {
+  .bookStage {
+    --w: min(41vw, 520px, 62svh);
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  .bookBody,
+  .captions {
+    margin-left: 50%;
+  }
+
+  .captions {
+    position: absolute;
+    top: 50%;
+    width: calc(var(--w) * 0.76);
+    margin: 0;
+    left: calc(50% - var(--w) * 0.88);
+    z-index: 2;
+    color: var(--paper-ink);
+  }
+
+  .caption {
+    inset: 0 0 auto;
+    transform: translateY(-50%);
+  }
+
+  .captionTitle {
+    font-size: clamp(1.75rem, 1rem + 1.6vw, 2.75rem);
+  }
+
+  .captionBody {
+    font-size: var(--step-body);
+    color: var(--paper-muted);
+  }
+}
+
+/* --------------------------------------------------------------- try ---- */
+
+.trySection {
+  width: var(--page);
+  margin-inline: auto;
+  padding-block: clamp(72px, 12svh, 140px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(32px, 5vw, 72px);
+  scroll-margin-top: 16px;
+}
+
+@media (min-width: 900px) {
+  .trySection {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    align-items: center;
+  }
+}
+
+.tryIntro {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+}
+
+.tryStage {
+  perspective: 1500px;
+}
+
+.trySheet {
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+.underSheet {
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  background: var(--c-marigold);
+  transform: translate3d(5px, 7px, -8px);
+}
+
+.underSheet + .underSheet {
+  background: var(--c-vermilion);
+  transform: translate3d(10px, 14px, -16px);
+}
+
+.try {
+  /* The mic button is written against the app's tokens, so the sheet re-points
+     them: inversion still means inversion, it just inverts to cream. */
+  --ground: var(--paper);
+  --ink: var(--paper-ink);
+  --ink-muted: var(--paper-muted);
+  --ink-faint: var(--paper-faint);
+  --raised: color-mix(in srgb, var(--paper-ink) 11%, var(--paper));
+  --live: var(--paper-live);
+  --live-ink: var(--paper);
+  --surface: #fdeecb;
+
+  position: relative;
+  background: var(--paper);
+  color: var(--paper-ink);
+  border-radius: 16px;
+  padding: clamp(18px, 3vw, 28px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 18px;
+  box-shadow: 0 30px 60px -22px rgb(8 6 50 / 0.7);
+  transform: translateZ(1px);
+}
+
+.tryHead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 12px;
+  box-shadow: inset 0 -2px 0 var(--rule-strong);
+}
+
+.tryTag {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 700;
+}
+
+.tryScore {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(2rem, 1.4rem + 2vw, 2.75rem);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+}
+
+.tryScoreSub {
+  font-family: var(--text);
+  font-weight: 400;
+  font-size: var(--step-small);
+  letter-spacing: 0;
+  color: var(--paper-muted);
+}
+
+.tryMic {
+  --size: clamp(92px, 24vw, 112px);
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.tryHint {
+  margin: 0;
+  font-size: var(--step-small);
+  color: var(--paper-muted);
+  max-width: 26ch;
+}
+
+.tryChipsLabel {
+  margin: 0 0 10px;
+  font-size: var(--step-small);
+  color: var(--paper-muted);
+}
+
+.chipRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  font-size: var(--step-small);
+  min-height: 44px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--paper-ink) 8%, transparent);
+  color: var(--paper-ink);
+  transition:
+    background-color var(--fast) var(--ease-out),
+    transform var(--fast) var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .chip:hover {
+    background: color-mix(in srgb, var(--paper-ink) 14%, transparent);
+  }
+}
+
+.chip:active {
+  transform: scale(0.97);
+}
+
+.tryNote,
+.tryMiss {
+  margin: 0;
+  font-size: var(--step-small);
+}
+
+.tryNote {
+  color: var(--paper-muted);
+}
+
+.tryMiss {
+  color: var(--paper-wicket);
+}
+
+.tryBook {
+  min-height: 150px;
+  padding-top: 14px;
+  box-shadow: inset 0 1px 0 var(--rule-strong);
+}
+
+.tryEmpty {
+  margin: 0;
+  font-size: var(--step-small);
+  color: var(--paper-muted);
+}
+
+.tryList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tryRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "said label" "mode label";
+  align-items: baseline;
+  gap: 0 14px;
+  padding: 9px 0;
+  box-shadow: inset 0 -1px 0 var(--rule);
+}
+
+.trySaid {
+  grid-area: said;
+  font-size: var(--step-small);
+  color: var(--paper-muted);
+  overflow-wrap: anywhere;
+}
+
+.tryLabel {
+  grid-area: label;
+  font-family: var(--display);
+  font-weight: 700;
+  text-align: right;
+}
+
+.tryMode {
+  grid-area: mode;
+  font-size: var(--step-small);
+  color: var(--paper-muted);
+}
+
+.tryOn {
+  font-weight: 600;
+  font-size: var(--step-small);
+  color: var(--paper-ink);
+  justify-self: start;
+  text-underline-offset: 4px;
+  padding-block: 8px;
+}
+
+/* ---------------------------------------------------------- sections ---- */
+
+.section {
+  width: var(--page);
+  margin-inline: auto;
+  padding-block: clamp(64px, 11svh, 130px);
+}
+
+.sectionTitle {
+  font-size: clamp(2rem, 1.2rem + 3vw, 3.75rem);
+  letter-spacing: -0.04em;
+  line-height: 1;
+  text-wrap: balance;
+  max-width: 16ch;
+}
+
+.sectionLede {
+  margin: 0;
+  max-width: 46ch;
+}
+
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+}
+
+@media (min-width: 860px) {
+  .split {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(32px, 5vw, 72px);
+    align-items: start;
+  }
+}
+
+.prose {
+  max-width: 62ch;
+}
+
+.prose p {
+  margin: 0 0 1em;
+}
+
+.prose strong {
+  color: var(--c-marigold);
+  font-family: var(--display);
+}
+
+.prose .proseNote {
+  color: var(--ink-muted);
+  font-size: var(--step-small);
+  margin: 0;
+}
+
+/* ------------------------------------------------------- commentary ---- */
+
+.clips {
+  margin: clamp(32px, 5vw, 56px) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.clip {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: clamp(16px, 3vw, 28px);
+  align-items: start;
+  padding-block: clamp(20px, 3vw, 32px);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--ink) 12%, transparent);
+}
+
+.clipPlay {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--c-night);
+  color: var(--c-cream);
+  display: grid;
+  place-items: center;
+  transition: transform var(--fast) var(--ease-out);
+}
+
+.clipPlay:active {
+  transform: scale(0.95);
+}
+
+.clipPlay[data-on] {
+  background: var(--c-vermilion);
+}
+
+.clipLine {
+  margin: 0;
+  font-size: clamp(1.375rem, 1rem + 1.7vw, 2.25rem);
+  line-height: 1.3;
+  max-width: 34ch;
+}
+
+.clipMeta {
+  margin: 8px 0 0;
+  font-size: var(--step-small);
+  color: var(--ink-muted);
+}
+
+/* ------------------------------------------------------------- drum ---- */
+
+.drumScene {
+  --face: clamp(150px, 19vw, 240px);
+  /* Half a face over tan(18deg): ten faces meeting edge to edge. */
+  --radius: calc(var(--face) * 1.5388);
+  --ink: var(--c-cream);
+  --ink-muted: #d9f0e4;
+  position: relative;
+  height: 340svh;
+  background: var(--c-pitch);
+  color: var(--ink);
+}
+
+.drumSticky {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: clip;
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  padding-block: clamp(32px, 8svh, 80px) 24px;
+}
+
+.drumHead {
+  width: var(--page);
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+}
+
+@media (min-width: 860px) {
+  .drumHead {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(32px, 5vw, 72px);
+  }
+}
+
+.drumStage {
+  perspective: 1700px;
+  display: grid;
+  place-items: center;
+  min-height: 0;
+}
+
+.drum {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  width: var(--face);
+  height: min(var(--face), 36svh);
+  transform-style: preserve-3d;
+  transform: rotateX(-6deg) rotateY(18deg);
+}
+
+.face {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 6px;
+  text-align: center;
+  background: var(--paper);
+  color: var(--paper-ink);
+  box-shadow: inset 0 -6px 0 var(--c-marigold);
+  backface-visibility: hidden;
+}
+
+.faceNative {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: calc(var(--face) * 0.17);
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+
+.faceEnglish {
+  font-size: var(--step-small);
+  color: var(--paper-muted);
+}
+
+/* ----------------------------------------------------------- ledger ---- */
+
+.ledgerSection {
+  background: var(--paper);
+  color: var(--paper-ink);
+  padding-block: clamp(64px, 11svh, 130px);
+  --ink: var(--paper-ink);
+  --ink-muted: var(--paper-muted);
+}
+
+.ledgerInner {
+  width: var(--page);
+  margin-inline: auto;
+}
+
+.ledger {
+  width: 100%;
+  margin-top: clamp(32px, 5vw, 56px);
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.ledger th,
+.ledger td {
+  padding: 14px 16px 14px 0;
+  box-shadow: inset 0 -1px 0 var(--rule-strong);
+  vertical-align: baseline;
+}
+
+.ledger thead th {
+  font-family: var(--display);
+  font-size: var(--step-small);
+  color: var(--paper-muted);
+}
+
+.ledger tbody th {
+  font-family: var(--display);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.ledgerSaid {
+  font-size: var(--step-lead);
+  overflow-wrap: anywhere;
+}
+
+.ledgerWhy {
+  color: var(--paper-muted);
+  font-size: var(--step-small);
+}
+
+@media (max-width: 639px) {
+  .ledgerWhy {
+    display: none;
+  }
+}
+
+/* ------------------------------------------------------------- rain ---- */
+
+.rainSection {
+  --ink: var(--c-night);
+  --ink-muted: #3b3672;
+  position: relative;
+  overflow: clip;
+  background: var(--c-marigold);
+  color: var(--ink);
+}
+
+/* Two sheets of falling streaks; the slider sets how heavy they are. */
+.rainLayer {
+  position: absolute;
+  inset: -20%;
+  transform: rotate(10deg);
+  pointer-events: none;
+  transition: opacity 300ms var(--ease-out);
+}
+
+.rainLayer::before,
+.rainLayer::after {
+  content: "";
+  position: absolute;
+  inset: -140px 0 0;
+  background: repeating-linear-gradient(90deg, rgb(20 16 63 / 0.34) 0 2px, transparent 2px 46px);
+  mask-image: repeating-linear-gradient(180deg, transparent 0 88px, #000 88px 140px);
+}
+
+.rainLayer::after {
+  left: 23px;
+  inset-block-start: -210px;
+  opacity: 0.6;
+}
+
+.rainSection[data-on] .rainLayer::before,
+.rainSection[data-on] .rainLayer::after {
+  animation: fall 700ms linear infinite;
+}
+
+.rainSection[data-on] .rainLayer::after {
+  animation-duration: 950ms;
+}
+
+@keyframes fall {
+  to {
+    transform: translateY(140px);
+  }
+}
+
+.rainInner {
+  position: relative;
+  width: min(1180px, 100% - 2 * var(--gutter));
+  margin-inline: auto;
+  padding-block: clamp(64px, 11svh, 130px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(32px, 5vw, 72px);
+  align-items: center;
+}
+
+@media (min-width: 860px) {
+  .rainInner {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.rainCopy {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 22px;
+  justify-items: start;
+}
+
+.rainControl {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+  cursor: pointer;
+}
+
+.rainControlLabel {
+  font-weight: 600;
+}
+
+.rainControlLabel strong {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 1.4em;
+}
+
+/* The track fills with night, and the thumb is a small cricket ball. */
+.rainRange {
+  appearance: none;
+  width: 100%;
+  height: 48px;
+  margin: 0;
+  background: transparent;
+  cursor: grab;
+}
+
+.rainRange::-webkit-slider-runnable-track {
+  height: 10px;
+  border-radius: 999px;
+  background: var(--c-night);
+}
+
+.rainRange::-moz-range-track {
+  height: 10px;
+  border-radius: 999px;
+  background: var(--c-night);
+}
+
+.rainRange::-webkit-slider-thumb {
+  appearance: none;
+  width: 44px;
+  height: 44px;
+  margin-top: -17px;
+  border: 0;
+  border-radius: 50%;
+  background:
+    linear-gradient(112deg, transparent 47%, #ede2cc 47% 48.5%, #7c1510 48.5% 51.5%, #ede2cc 51.5% 53%, transparent 53%),
+    radial-gradient(circle at 34% 28%, #e0523f, #b5211a 50%, #5a0f0b 100%);
+  box-shadow: 0 8px 14px -6px rgb(8 6 50 / 0.6);
+}
+
+.rainRange::-moz-range-thumb {
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background:
+    linear-gradient(112deg, transparent 47%, #ede2cc 47% 48.5%, #7c1510 48.5% 51.5%, #ede2cc 51.5% 53%, transparent 53%),
+    radial-gradient(circle at 34% 28%, #e0523f, #b5211a 50%, #5a0f0b 100%);
+  box-shadow: 0 8px 14px -6px rgb(8 6 50 / 0.6);
+}
+
+.rainRange:active {
+  cursor: grabbing;
+}
+
+.rainRange:focus-visible {
+  outline: 3px solid var(--c-night);
+  outline-offset: 2px;
+  border-radius: 12px;
+}
+
+.rainLink {
+  display: inline-block;
+  background: var(--c-night);
+  color: var(--c-cream);
+  font-family: var(--display);
+  font-weight: 800;
+  border-radius: 999px;
+  padding: 16px 32px;
+  text-decoration: none;
+  transition: transform var(--fast) var(--ease-out);
+}
+
+.rainLink:active {
+  transform: scale(0.97);
+}
+
+/* A painted ground scoreboard. */
+.board {
+  background: var(--c-night);
+  color: var(--c-cream);
+  border-radius: 24px;
+  padding: clamp(24px, 4vw, 40px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 6px;
+  box-shadow: 0 30px 60px -24px rgb(8 6 50 / 0.7);
+}
+
+.boardLabel {
+  font-weight: 600;
+}
+
+.boardTarget {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(5.5rem, 3rem + 14vw, 11rem);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  color: var(--c-marigold);
+}
+
+.boardSub {
+  font-size: var(--step-lead);
+  font-weight: 600;
+}
+
+.boardCompare {
+  margin-top: 10px;
+  padding-top: 12px;
+  box-shadow: inset 0 1px 0 rgb(255 244 220 / 0.25);
+  color: #cfcbef;
+}
+
+/* ------------------------------------------------------ player cards ---- */
+
+.fieldPitch {
+  --ink: var(--c-cream);
+  --ink-muted: #e3f3e6;
+  --ground: var(--c-night);
+  background: var(--c-pitch);
+  color: var(--ink);
+  overflow-x: clip;
+}
+
+/* A row you swipe on a phone; three cards laid on the table from 900px. */
+.cardDeck {
+  list-style: none;
+  margin: clamp(32px, 5vw, 64px) calc(var(--gutter) * -1) 0;
+  padding: 8px var(--gutter) 28px;
+  display: flex;
+  align-items: stretch;
+  gap: 14px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--gutter);
+  scrollbar-width: none;
+}
+
+.cardDeck::-webkit-scrollbar {
+  display: none;
+}
+
+.cardSlot {
+  flex: 0 0 min(82vw, 330px);
+  scroll-snap-align: start;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 900px) {
+  .cardDeck {
+    margin-inline: 0;
+    padding: 12px 0 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(16px, 2.4vw, 32px);
+    overflow: visible;
+  }
+
+  .cardSlot:nth-child(1) {
+    transform: rotate(-2.5deg);
+  }
+
+  .cardSlot:nth-child(2) {
+    transform: translateY(18px) rotate(1deg);
+  }
+
+  .cardSlot:nth-child(3) {
+    transform: rotate(2.5deg);
+  }
+}
+
+.cardLift {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  perspective: 1400px;
+  transition: transform 220ms var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cardLift:hover {
+    transform: translateY(-8px);
+  }
+}
+
+.cardInner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  transform-style: preserve-3d;
+  transition: transform 560ms var(--ease-in-out);
+}
+
+.cardInner[data-turned] {
+  transform: rotateY(180deg);
+}
+
+.cardFace {
+  grid-area: 1 / 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  /* Name at the top, figures at the foot, however tall the blank card makes the row. */
+  grid-template-rows: auto auto auto 1fr;
+  gap: 16px;
+  min-width: 0;
+  padding: clamp(20px, 2vw, 28px);
+  padding-bottom: 60px;
+  border-radius: 20px;
+  background: var(--c-cream);
+  color: var(--c-night);
+  backface-visibility: hidden;
+  box-shadow: 0 22px 40px -22px rgb(3 32 20 / 0.75);
+}
+
+.cardBack {
+  background: var(--c-ultra);
+  color: var(--c-cream);
+  transform: rotateY(180deg);
+}
+
+.cardHead {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 2px 12px;
+  font-size: var(--step-small);
+  font-weight: 600;
+}
+
+.cardHead span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.cardName {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(1.75rem, 1.1rem + 1.5vw, 2.5rem);
+  line-height: 0.98;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+
+.cardName span {
+  display: block;
+}
+
+.cardMain {
+  margin: 0;
+  font-weight: 700;
+}
+
+.cardMain strong {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(4rem, 2.6rem + 4vw, 6.25rem);
+  line-height: 0.9;
+  letter-spacing: -0.045em;
+  color: var(--c-vermilion);
+}
+
+.cardRows {
+  align-self: end;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.cardRows dt {
+  font-size: var(--step-small);
+  color: #474270;
+}
+
+.cardRows dd {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: var(--step-lead);
+  letter-spacing: -0.03em;
+}
+
+.cardBackTitle {
+  margin: 0;
+  font-size: var(--step-lead);
+  letter-spacing: -0.03em;
+}
+
+.cardRecent {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 18px;
+}
+
+.cardRecent li {
+  display: grid;
+  gap: 2px;
+}
+
+.cardRecent span {
+  font-size: var(--step-small);
+  color: #dfe1ff;
+}
+
+.cardRecent strong {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: var(--step-lead);
+  letter-spacing: -0.03em;
+  color: var(--c-marigold);
+}
+
+/* The whole card is the button; its label sits flat at the foot of either face. */
+.cardTurn {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: 20px clamp(20px, 2vw, 28px);
+  border: 0;
+  border-radius: 20px;
+  background: transparent;
+  color: var(--c-night);
+  font-family: var(--display);
+  font-weight: 800;
+  cursor: pointer;
+  touch-action: pan-x pan-y;
+}
+
+.cardTurn span {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.cardTurn[data-turned] {
+  color: var(--c-cream);
+}
+
+.cardTurn:focus-visible {
+  outline: 3px solid var(--c-marigold);
+  outline-offset: 3px;
+}
+
+.cardYours {
+  grid-area: auto;
+  grid-template-rows: none;
+  padding-bottom: clamp(20px, 2vw, 28px);
+  background: var(--c-marigold);
+}
+
+.cardYours .cardMain strong {
+  color: var(--c-night);
+}
+
+.cardYours .cardRows dt {
+  color: #3b3672;
+}
+
+/* Sized here and scaled on the input, so a long name can step down within it. */
+.cardNameField {
+  display: block;
+  font-size: clamp(1.75rem, 1.1rem + 1.5vw, 2.5rem);
+}
+
+.cardNameInput {
+  display: block;
+  width: 100%;
+  min-height: 58px;
+  padding: 6px 2px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: inset 0 -3px 0 var(--c-night);
+  color: var(--c-night);
+  caret-color: var(--c-vermilion);
+  font-family: var(--display);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+}
+
+.cardNameInput::placeholder {
+  color: #4e4530;
+  opacity: 1;
+}
+
+.cardNameInput:focus-visible {
+  outline: 3px solid var(--c-night);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.cardNote {
+  margin: 0;
+  font-size: var(--step-small);
+  font-weight: 600;
+}
+
+.cardAction {
+  justify-self: start;
+  align-self: end;
+  background: var(--c-night);
+  color: var(--c-cream);
+  font-family: var(--display);
+  font-weight: 800;
+  border-radius: 999px;
+  padding: 13px 22px;
+  text-decoration: none;
+  transition: transform var(--fast) var(--ease-out);
+}
+
+.cardAction:active {
+  transform: scale(0.97);
+}
+
+/* The turn becomes a crossfade: both sides, no spin. */
+@media (prefers-reduced-motion: reduce) {
+  .cardLift,
+  .cardLift:hover {
+    transform: none;
+    transition: none;
+  }
+
+  .cardInner,
+  .cardInner[data-turned] {
+    transform: none;
+    transition: none;
+  }
+
+  .cardFace {
+    backface-visibility: visible;
+    transition: opacity 160ms ease;
+  }
+
+  .cardBack {
+    transform: none;
+    opacity: 0;
+  }
+
+  .cardInner[data-turned] .cardBack {
+    opacity: 1;
+  }
+
+  .cardInner[data-turned] .cardFace:not(.cardBack) {
+    opacity: 0;
+  }
+
+  .cardSlot:nth-child(n) {
+    transform: none;
+  }
+}
+
+/* ----------------------------------------------------- the small print ---- */
+
+.footLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 24px;
+  font-family: var(--display);
+  font-weight: 800;
+}
+
+.footLinks a {
+  color: var(--ink);
+  text-decoration: none;
+  padding-block: 12px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .footLinks a:hover {
+    color: var(--c-marigold);
+  }
+}
+
+.goodToKnow summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--ink);
+  padding-block: 12px;
+}
+
+.goodToKnow dl {
+  margin: 8px 0 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px clamp(24px, 4vw, 56px);
+}
+
+@media (min-width: 760px) {
+  .goodToKnow dl {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.goodToKnow dt {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.goodToKnow dd {
+  margin: 2px 0 0;
+  max-width: 56ch;
+}
+
+/* ----------------------------------------------------- saved matches ---- */
+
+.recent {
+  width: var(--page);
+  margin-inline: auto;
+  padding-top: clamp(48px, 7vw, 96px);
+}
+
+.recentTitle {
+  font-size: var(--step-lead);
+  letter-spacing: -0.03em;
+}
+
+.recentList {
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.recentItem {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2px;
+  padding-block: 14px;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--ink) 12%, transparent);
+}
+
+.recentTeams {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.recentMeta {
+  font-size: var(--step-small);
+  color: var(--ink-muted);
+  overflow-wrap: anywhere;
+}
+
+/* ------------------------------------------------------------ close ---- */
+
+.close {
+  position: relative;
+  width: var(--page);
+  margin-inline: auto;
+  padding-block: clamp(72px, 14svh, 160px) clamp(180px, 34vw, 320px);
+  overflow-x: clip;
+  overflow-y: visible;
+}
+
+.closeTitle {
+  font-size: clamp(2.5rem, 1.2rem + 5.4vw, 6rem);
+  color: var(--c-marigold);
+  letter-spacing: -0.04em;
+  line-height: 0.98;
+  text-transform: uppercase;
+  text-wrap: balance;
+  max-width: 13ch;
+  margin-bottom: 32px;
+}
+
+.closeShadow {
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  bottom: 2%;
+  height: 12%;
+  border-radius: 50%;
+  background: rgb(8 6 50 / 0.4);
+}
+
+.closeBall {
+  position: absolute;
+  right: 0;
+  bottom: 12px;
+  width: clamp(170px, 30vw, 300px);
+  height: clamp(170px, 30vw, 300px);
+}
+
+.foot {
+  width: var(--page);
+  margin-inline: auto;
+  padding-block: 28px max(36px, env(safe-area-inset-bottom));
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--ink) 12%, transparent);
+  font-size: var(--step-small);
+  color: var(--ink-muted);
+}
+
+.foot p {
+  margin: 0;
+  max-width: 68ch;
+}
+
+.foot strong {
+  color: var(--ink);
+}
+
+/* ---------------------------------------------------- reduced motion ---- */
+
+/*
+ * No scroll-tied movement at all: the same content, in reading order. The ball
+ * still sits in the hero and the book's pages are simply laid out.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .delivery,
+  .bookScene,
+  .drumScene {
+    height: auto;
+  }
+
+  .deliverySticky {
+    position: relative;
+    min-height: 100svh;
+    height: auto;
+  }
+
+  .leather {
+    display: none;
+  }
+
+  .sun {
+    opacity: 1;
+  }
+
+  .pitchShadow,
+  .spinHint {
+    display: none;
+  }
+
+  /* Still shows how heavy the rain is, without anything falling. */
+  .rainSection[data-on] .rainLayer::before,
+  .rainSection[data-on] .rainLayer::after {
+    animation: none;
+  }
+
+  .deliveryBall {
+    cursor: default;
+  }
+
+  .bookSticky,
+  .drumSticky {
+    position: static;
+    height: auto;
+    overflow: visible;
+  }
+
+  .bookStage {
+    display: block;
+    height: auto;
+    perspective: none;
+    width: var(--page, min(1180px, 100% - 2 * var(--gutter)));
+    margin-inline: auto;
+    padding-block: clamp(56px, 9svh, 100px);
+    --w: min(100%, 520px);
+    --h: auto;
+  }
+
+  .bookBody {
+    width: min(100%, 520px);
+    height: auto;
+    margin: 0;
+    transform: none;
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 18px;
+  }
+
+  .bookBody::before,
+  .back,
+  .shade,
+  .turning:last-of-type {
+    display: none;
+  }
+
+  .turning,
+  .pageBase,
+  .front {
+    position: static;
+    transform: none;
+  }
+
+  .captions {
+    position: static;
+    width: auto;
+    min-height: 0;
+    margin: 28px 0 0;
+    transform: none;
+    color: inherit;
+  }
+
+  .caption {
+    position: static;
+    transform: none;
+    margin-bottom: 18px;
+  }
+
+  .captionBody {
+    color: var(--ink-muted);
+    font-size: var(--step-body);
+  }
+
+  .drumStage {
+    perspective: none;
+    display: block;
+    width: min(1180px, 100% - 2 * var(--gutter));
+    margin: 32px auto 0;
+  }
+
+  .drum {
+    width: 100%;
+    height: auto;
+    transform: none;
+    display: grid;
+    gap: 2px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .face {
+    position: static;
+    transform: none !important;
+    padding: 18px 10px;
+    --face: 150px;
+  }
+
+  .ballDrawing,
+  .ballHost {
+    transition: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) and (min-width: 860px) {
+  .drum {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
