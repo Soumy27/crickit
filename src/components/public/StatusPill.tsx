@@ -1,9 +1,11 @@
+import type { StringKey } from "@/lib/i18n/strings";
+import { useT } from "@/lib/i18n/use-language";
 import type { ListingStatus } from "@/lib/public/summary";
 import type { PublicSummary } from "@/lib/public/summary";
 import { oversString } from "@/lib/scoring/engine";
 import styles from "./public.module.css";
 
-const LABEL: Record<ListingStatus, string> = { live: "Live", paused: "Paused", finished: "Finished" };
+const LABEL: Record<ListingStatus, StringKey> = { live: "statusLive", paused: "statusPaused", finished: "statusFinished" };
 
 const DATE = new Intl.DateTimeFormat("en-IN", {
   day: "numeric",
@@ -21,13 +23,17 @@ export function shortDate(value: string): string {
 }
 
 export function StatusPill({ status }: { status: ListingStatus }) {
-  return <span className={styles.status} data-status={status}>{LABEL[status]}</span>;
+  const t = useT();
+  return <span className={styles.status} data-status={status}>{t(LABEL[status])}</span>;
 }
 
-/** "Shivaji XI 84/2 (9.4)", innings by innings, or a plain "Not started". */
-export function scoreLine(summary: PublicSummary): string {
+/**
+ * "Shivaji XI 84/2 (9.4)", innings by innings, or a plain "Not started". Client
+ * screens pass that phrase in their own language; server metadata has none.
+ */
+export function scoreLine(summary: PublicSummary, notStarted = "Not started"): string {
   const played = summary.innings.filter((i) => i.balls > 0 || i.runs > 0);
-  if (played.length === 0) return "Not started";
+  if (played.length === 0) return notStarted;
   return played.map((i) => `${i.team} ${i.runs}/${i.wickets} (${oversString(i.balls)})`).join(" · ");
 }
 

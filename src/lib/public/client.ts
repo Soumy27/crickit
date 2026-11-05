@@ -9,6 +9,7 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { StringKey } from "../i18n/strings";
 import type { MatchListing, StoredMatch } from "../match/store";
 import { coarsePlace, type Place } from "./geo";
 
@@ -75,7 +76,7 @@ export function usePublicSync(
       } else if (res.status === 400 || res.status === 403) {
         const { error } = (await res.json().catch(() => ({}))) as { error?: string };
         setStatus("refused");
-        setMessage(error ?? "The match list refused this match.");
+        setMessage(error ?? null);
       } else {
         setStatus("waiting");
       }
@@ -146,11 +147,11 @@ export function useLocate() {
   return { locate, state };
 }
 
-export const LOCATE_MESSAGES: Record<LocateState, string | null> = {
+export const LOCATE_MESSAGES: Record<LocateState, StringKey | null> = {
   idle: null,
-  locating: "Finding where you are…",
-  denied: "Location is blocked for this site. Allow it in your browser settings, or search by name.",
-  unavailable: "Could not get your location. Search by name or town instead.",
+  locating: "locating",
+  denied: "locationDenied",
+  unavailable: "locationUnavailable",
 };
 
 /** The tournament's scorer key, on the organiser's and scorers' own devices. */

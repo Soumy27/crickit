@@ -1,18 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { usePublicSync, whatsappLink } from "@/lib/public/client";
+import { fill } from "@/lib/i18n/result";
+import type { StringKey } from "@/lib/i18n/strings";
+import { useT } from "@/lib/i18n/use-language";
+import { usePublicSync, whatsappLink, type SyncStatus } from "@/lib/public/client";
 import type { MatchListing, StoredMatch } from "@/lib/match/store";
 import styles from "./public.module.css";
 
-const STATUS_TEXT = {
-  idle: "",
-  saving: "Updating…",
-  saved: "Public score is up to date.",
-  waiting: "No signal. Scoring is safe; the public score catches up when you are back online.",
-  gone: "This match was removed from the public list.",
-  refused: "",
-} as const;
+const STATUS_TEXT: Record<SyncStatus, StringKey | null> = {
+  idle: null,
+  saving: "syncSaving",
+  saved: "syncSaved",
+  waiting: "syncWaiting",
+  gone: "syncGone",
+  refused: null,
+};
 
 /**
  * The opt-in, on the scoring screen as well as the setup form, since a scorer
@@ -25,6 +28,7 @@ export function ShareBar({
   match: StoredMatch;
   setListing: (listing: MatchListing | undefined) => void;
 }) {
+  const t = useT();
   const { status, message } = usePublicSync(match, setListing);
   const [confirming, setConfirming] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -36,21 +40,18 @@ export function ShareBar({
 
   if (!listing?.wanted) {
     return (
-      <section className={styles.share} aria-label="Sharing">
+      <section className={styles.share} aria-label={t("sharing")}>
         <div className={styles.shareRow}>
-          <p className={styles.shareText}>Private to this phone.</p>
+          <p className={styles.shareText}>{t("privateToPhone")}</p>
           {!confirming && (
             <button type="button" className={styles.shareButton} onClick={() => setConfirming(true)}>
-              Share live
+              {t("shareLive")}
             </button>
           )}
         </div>
         {confirming && (
           <>
-            <p className={styles.shareText}>
-              Anyone with the link, or searching, will see the teams, ground, score and every
-              player&rsquo;s name. Get the players&rsquo; OK first, and a parent&rsquo;s for children.
-            </p>
+            <p className={styles.shareText}>{t("sharePrivacyWarning")}</p>
             <div className={styles.shareRow}>
               <button
                 type="button"
@@ -60,10 +61,10 @@ export function ShareBar({
                   setConfirming(false);
                 }}
               >
-                Make this match public
+                {t("makePublic")}
               </button>
               <button type="button" className={styles.shareButton} onClick={() => setConfirming(false)}>
-                Keep it private
+                {t("keepPrivate")}
               </button>
             </div>
           </>
@@ -81,7 +82,7 @@ export function ShareBar({
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      setStopError(`Could not copy. The link is ${url}`);
+      setStopError(fill(t("copyFailed"), { url }));
     }
   }
 
@@ -99,38 +100,40 @@ export function ShareBar({
       });
       // Already gone is the outcome being asked for.
       if (res.ok || res.status === 404) setListing(undefined);
-      else setStopError("Could not remove it yet. Check your signal and try again.");
+      else setStopError(t("removeFailed"));
     } catch {
-      setStopError("No signal, so it is still public. Try again when you are back online.");
+      setStopError(t("removeOffline"));
     } finally {
       setStopping(false);
     }
   }
 
+  const statusKey = STATUS_TEXT[status];
+
   return (
-    <section className={styles.share} aria-label="Sharing">
+    <section className={styles.share} aria-label={t("sharing")}>
       <p className={styles.shareText} role="status">
-        {url ? `Public at ${url.replace(/^https?:\/\//, "")}` : "Making it public…"}
-        {status === "refused" ? ` ${message ?? ""}` : ` ${STATUS_TEXT[status]}`}
+        {url ? fill(t("publicAt"), { url: url.replace(/^https?:\/\//, "") }) : t("makingPublic")}
+        {status === "refused" ? ` ${message ?? t("listRefused")}` : statusKey ? ` ${t(statusKey)}` : ""}
       </p>
       <div className={styles.shareRow}>
         {url && (
           <>
             <a
               className={`${styles.shareButton} ${styles.shareStrong}`}
-              href={whatsappLink(`${teams}, live score: ${url}`)}
+              href={whatsappLink(fill(t("shareTextLive"), { teams, url }))}
               target="_blank"
               rel="noreferrer"
             >
-              Share on WhatsApp
+              {t("shareWhatsapp")}
             </a>
             <button type="button" className={styles.shareButton} onClick={copy}>
-              {copied ? "Copied" : "Copy link"}
+              {t(copied ? "copied" : "copyLink")}
             </button>
           </>
         )}
         <button type="button" className={styles.shareButton} onClick={stop} disabled={stopping}>
-          {stopping ? "Removing…" : "Stop sharing"}
+          {t(stopping ? "removing" : "stopSharing")}
         </button>
       </div>
       {stopError && <p className={styles.error} role="alert">{stopError}</p>}

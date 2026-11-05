@@ -5,25 +5,26 @@ import { economy, oversString, runRate, strikeRate } from "@/lib/scoring/engine"
 import type { InningsEntry } from "@/lib/scoring/match";
 import type { InningsState } from "@/lib/scoring/types";
 import { careerKey } from "@/lib/match/careers";
+import type { StringKey } from "@/lib/i18n/strings";
 import { useT } from "@/lib/i18n/use-language";
 import styles from "./stats.module.css";
 
-const DISMISSAL: Record<string, string> = { run_out: "run out" };
-
-function howOut(state: InningsState, id: string): string {
+/** Scorebook shorthand (b, c, st, lbw) stays as it is; the words follow the language. */
+function howOut(state: InningsState, id: string, t: (key: StringKey) => string): string {
+  const word = (key: StringKey) => t(key).toLowerCase();
   const b = state.batters[id];
-  if (!b.batted) return "did not bat";
-  if (!b.out || !b.dismissal) return "not out";
+  if (!b.batted) return word("didNotBat");
+  if (!b.out || !b.dismissal) return word("notOut");
   const { kind, fielder, bowlerId } = b.dismissal;
   // The bowler when it fell, not whoever happens to be bowling now.
   const bowler = bowlerId ? state.bowlers[bowlerId]?.name : undefined;
   const by = bowler ? ` b ${bowler}` : "";
-  if (kind === "bowled") return bowler ? `b ${bowler}` : "bowled";
-  if (kind === "caught") return `${fielder ? `c ${fielder}` : "caught"}${by}`;
+  if (kind === "bowled") return bowler ? `b ${bowler}` : word("bowled");
+  if (kind === "caught") return `${fielder ? `c ${fielder}` : word("caught")}${by}`;
   if (kind === "lbw") return `lbw${by}`;
-  if (kind === "stumped") return `${fielder ? `st ${fielder}` : "stumped"}${by}`;
-  if (kind === "hit_wicket") return `hit wicket${by}`;
-  return fielder ? `run out (${fielder})` : DISMISSAL[kind] ?? kind;
+  if (kind === "stumped") return `${fielder ? `st ${fielder}` : word("stumped")}${by}`;
+  if (kind === "hit_wicket") return `${word("hitWicket")}${by}`;
+  return fielder ? `${word("runOut")} (${fielder})` : kind === "run_out" ? word("runOut") : kind;
 }
 
 /**
@@ -76,7 +77,7 @@ export function InningsCard({ entry, linkPlayers = true }: { entry: InningsEntry
                   {player(b.name)}
                   <br />
                   <span className={b.batted && !b.out ? `${styles.out} ${styles.notOut}` : styles.out}>
-                    {howOut(state, b.id)}
+                    {howOut(state, b.id, t)}
                   </span>
                 </td>
                 <td className={styles.strong}>{b.batted ? b.runs : "—"}</td>

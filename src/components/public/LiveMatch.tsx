@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { describeResult } from "@/lib/i18n/result";
+import { describeResult, fill } from "@/lib/i18n/result";
 import { useT } from "@/lib/i18n/use-language";
 import { whatsappLink } from "@/lib/public/client";
 import type { PublicMatchView } from "@/lib/public/queries";
@@ -59,11 +59,9 @@ export function LiveMatch({ initial }: { initial: PublicMatchView }) {
   if (removed || !game) {
     return (
       <main className={stats.page}>
-        <Link href="/discover" className={stats.back}>← Find matches</Link>
-        <h1 className={stats.title}>{removed ? "No longer public" : "This score could not be read"}</h1>
-        <p className={stats.subtitle}>
-          {removed ? "The scorer has stopped sharing this match." : "Ask the scorer to send the link again."}
-        </p>
+        <Link href="/discover" className={stats.back}>← {t("findMatches")}</Link>
+        <h1 className={stats.title}>{t(removed ? "noLongerPublic" : "scoreUnreadable")}</h1>
+        <p className={stats.subtitle}>{t(removed ? "scorerStopped" : "askForLink")}</p>
       </main>
     );
   }
@@ -76,7 +74,7 @@ export function LiveMatch({ initial }: { initial: PublicMatchView }) {
 
   return (
     <main className={stats.page}>
-      <Link href="/discover" className={stats.back}>← Find matches</Link>
+      <Link href="/discover" className={stats.back}>← {t("findMatches")}</Link>
 
       <div className={stats.banner}>
         <div className={styles.cardTop}>
@@ -97,8 +95,10 @@ export function LiveMatch({ initial }: { initial: PublicMatchView }) {
         )}
         {chasing && (
           <p className={stats.bannerSub} role="status">
-            {t("target")} {current.target}: {current.battingTeam} need {need}
-            {ballsLeft !== null ? ` from ${ballsLeft} balls` : ""}
+            {t("target")} {current.target}: {current.battingTeam} ·{" "}
+            {ballsLeft !== null
+              ? fill(t("needRunsBalls"), { runs: need, balls: ballsLeft })
+              : fill(t("needRuns"), { runs: need })}
           </p>
         )}
         <ol className={`${stats.bannerScores} tabular`}>
@@ -111,30 +111,30 @@ export function LiveMatch({ initial }: { initial: PublicMatchView }) {
         </ol>
       </div>
 
-      {stale && <p className={styles.note} role="status">Could not refresh. Showing the last score we have.</p>}
+      {stale && <p className={styles.note} role="status">{t("couldNotRefresh")}</p>}
       {view.status === "paused" && (
-        <p className={styles.note}>The scorer has not updated this for a while, so it may be out of date.</p>
+        <p className={styles.note}>{t("scorerQuiet")}</p>
       )}
 
       <div className={styles.actions}>
         {origin && (
           <a
             className={styles.quiet}
-            href={whatsappLink(`${teams}, score: ${origin}/m/${view.code}`)}
+            href={whatsappLink(fill(t("shareTextScore"), { teams, url: `${origin}/m/${view.code}` }))}
             target="_blank"
             rel="noreferrer"
           >
-            Share on WhatsApp
+            {t("shareWhatsapp")}
           </a>
         )}
-        <Link href="/match/new" className={styles.quiet}>Score your own match</Link>
+        <Link href="/match/new" className={styles.quiet}>{t("scoreYourOwn")}</Link>
       </div>
 
       {[...game.innings].reverse().map((entry) => (
         <InningsCard key={entry.number} entry={entry} linkPlayers={false} />
       ))}
 
-      <p className={styles.note}>Scored by a volunteer at the ground, and not an official record.</p>
+      <p className={styles.note}>{t("volunteerNote")}</p>
     </main>
   );
 }

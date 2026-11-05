@@ -11,6 +11,7 @@ import { LANGUAGES } from "@/lib/gnani/languages";
 import type { MatchFormat } from "@/lib/scoring/match";
 import type { Player } from "@/lib/scoring/types";
 import styles from "./setup.module.css";
+import type { StringKey } from "@/lib/i18n/strings";
 import { useT } from "@/lib/i18n/use-language";
 
 /**
@@ -43,11 +44,13 @@ export default function NewMatchPage() {
   const [format, setFormat] = useState<MatchFormat>("limited");
   const [days, setDays] = useState("5");
   const [language, setLanguage] = useState("indic-auto");
-  const [error, setError] = useState<string | null>(null);
+  // A key, not text: the fixture check below runs on mount, before the language has settled.
+  const [error, setError] = useState<StringKey | null>(null);
   const [listed, setListed] = useState(false);
   const [place, setPlace] = useState<Place | null>(null);
   const [tournament, setTournament] = useState<{ code: string; key: string; name: string } | null>(null);
   const { locate, state: locating } = useLocate();
+  const locateMessage = LOCATE_MESSAGES[locating];
 
   // A fixture opened from a tournament page arrives with its teams and overs set.
   useEffect(() => {
@@ -56,19 +59,19 @@ export default function NewMatchPage() {
     if (!code) return;
     const key = tournamentKey(code);
     if (!key) {
-      setError("This device does not have the scorer link for that tournament. Ask the organiser for it.");
+      setError("noScorerLink");
       return;
     }
     setBattingTeam(params.get("a") ?? "");
     setBowlingTeam(params.get("b") ?? "");
     void fetch(`/api/tournaments/${code}`)
       .then((res) => (res.ok ? (res.json() as Promise<{ name: string; overs: number }>) : null))
-      .then((t) => {
-        if (!t) return setError("Could not load that tournament. Check your signal and try again.");
-        setOvers(String(t.overs));
-        setTournament({ code, key, name: t.name });
+      .then((found) => {
+        if (!found) return setError("tournamentLoadFailed");
+        setOvers(String(found.overs));
+        setTournament({ code, key, name: found.name });
       })
-      .catch(() => setError("Could not load that tournament. Check your signal and try again."));
+      .catch(() => setError("tournamentLoadFailed"));
   }, []);
 
   const isPublic = listed || tournament !== null;
@@ -78,18 +81,18 @@ export default function NewMatchPage() {
     const bowling = parseSquad(bowlingSquad, "o");
 
     if (!battingTeam.trim() || !bowlingTeam.trim()) {
-      return setError(t("errTeams"));
+      return setError("errTeams");
     }
     if (battingTeam.trim().toLowerCase() === bowlingTeam.trim().toLowerCase()) {
-      return setError(t("errSameTeam"));
+      return setError("errSameTeam");
     }
     // Both sides bat now, so both need a pair to open with.
-    if (batting.length < 2 || bowling.length < 2) return setError(t("errSquads"));
+    if (batting.length < 2 || bowling.length < 2) return setError("errSquads");
 
     const id = crypto.randomUUID();
     const maxOvers = format === "test" || overs.trim() === "" ? null : Number(overs);
     if (maxOvers !== null && (!Number.isInteger(maxOvers) || maxOvers < 1)) {
-      return setError(t("errOvers"));
+      return setError("errOvers");
     }
 
     saveMatch({
@@ -122,6 +125,8 @@ export default function NewMatchPage() {
     });
     router.push(`/match/${id}`);
   }
+
+  const [partOfBefore, partOfAfter] = t("partOfTournament").split("{name}");
 
   return (
     <main className={styles.page}>
@@ -204,16 +209,15 @@ export default function NewMatchPage() {
 
       {tournament ? (
         <p className={styles.help}>
-          Part of <strong>{tournament.name}</strong>. Tournament matches are public, so the teams,
-          ground, score and every player&rsquo;s name can be seen by anyone.
+          {partOfBefore}<strong>{tournament.name}</strong>{partOfAfter} {t("tournamentMatchesPublic")}
         </p>
       ) : (
         <fieldset className={styles.formats}>
-          <legend className={styles.label}>Who can see this match?</legend>
+          <legend className={styles.label}>{t("whoCanSee")}</legend>
           {[false, true].map((value) => (
             <label key={String(value)} className={styles.format} data-on={listed === value || undefined}>
               <input type="radio" name="listing" checked={listed === value} onChange={() => setListed(value)} />
-              {value ? "Anyone" : "Only this phone"}
+              {t(value ? "anyone" : "onlyThisPhone")}
             </label>
           ))}
         </fieldset>
@@ -223,9 +227,7 @@ export default function NewMatchPage() {
         <div className={styles.field}>
           {!tournament && (
             <p className={styles.help}>
-              Anyone with the link, or searching, will see the teams, ground, score and every
-              player&rsquo;s name. Get the players&rsquo; OK first, and a parent&rsquo;s for children.
-              You can stop sharing at any time.
+              {t("sharePrivacyWarning")} {t("stopAnyTime")}
             </p>
           )}
           <div className={pub.placeRow}>
@@ -235,19 +237,19 @@ export default function NewMatchPage() {
               disabled={locating === "locating"}
               onClick={async () => setPlace(await locate())}
             >
-              {place ? "Ground location added" : "I am at the ground"}
+              {t(place ? "groundAdded" : "atTheGround")}
             </button>
             {place && (
-              <button type="button" className={pub.quiet} onClick={() => setPlace(null)}>Remove</button>
+              <button type="button" className={pub.quiet} onClick={() => setPlace(null)}>{t("remove")}</button>
             )}
           </div>
           <p className={styles.help}>
-            {LOCATE_MESSAGES[locating] ?? "Optional. Saved to about a kilometre, so “near me” can find this match."}
+            {t(locateMessage ?? "savedNearMatch")}
           </p>
         </div>
       )}
 
-      {error && <p className={styles.error} role="alert">{error}</p>}
+      {error && <p className={styles.error} role="alert">{t(error)}</p>}
 
       <button type="button" className={styles.submit} onClick={start}>
         {t("startScoring")}

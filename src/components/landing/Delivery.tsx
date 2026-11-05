@@ -210,7 +210,7 @@ export function Delivery() {
           <span className={styles.wordmark}>Crickit</span>
           <nav className={styles.barNav} aria-label="Main">
             <LanguageSwitch />
-            <Link href="/discover">Find matches</Link>
+            <Link href="/discover">{t("findMatches")}</Link>
             <Link href="/players">{t("players")}</Link>
           </nav>
         </header>

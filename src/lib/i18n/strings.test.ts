@@ -32,6 +32,15 @@ describe("the dictionaries", () => {
     expect(untouched).toEqual([]);
   });
 
+  it.each(codes)("%s keeps every {slot} the English has", (code) => {
+    const slots = (text: string) => (text.match(/\{\w+\}/g) ?? []).sort();
+    const broken = keys.filter((k) => {
+      const text = DICTS[code][k];
+      return text && slots(text).join() !== slots(ENGLISH_STRINGS[k]).join();
+    });
+    expect(broken).toEqual([]);
+  });
+
   it("falls back to English rather than to nothing", () => {
     expect(translate("ta-IN", "runs")).toBe("ஓட்டங்கள்");
     expect(translate("en-IN", "runs")).toBe("Runs");

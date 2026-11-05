@@ -16,6 +16,7 @@ import { careerInsights } from "@/lib/match/insights";
 import { oversString } from "@/lib/scoring/engine";
 import pub from "@/components/public/public.module.css";
 import styles from "@/components/stats/stats.module.css";
+import { fill } from "@/lib/i18n/result";
 import { useT } from "@/lib/i18n/use-language";
 
 export default function PlayerPage({
@@ -38,27 +39,25 @@ export default function PlayerPage({
   if (career === null) {
     return (
       <main className={styles.page}>
-        <Link href="/players" className={styles.back}>← Players</Link>
-        <h1 className={styles.title}>No record here</h1>
-        <p className={styles.subtitle}>
-          Careers are built from the matches on this device.
-        </p>
+        <Link href="/players" className={styles.back}>← {t("players")}</Link>
+        <h1 className={styles.title}>{t("noRecordHere")}</h1>
+        <p className={styles.subtitle}>{t("careersFromMatches")}</p>
       </main>
     );
   }
 
   const avg = battingAverage(career.batting);
   const bowlAvg = bowlingAverage(career.bowling);
-  const insights = careerInsights(career);
+  const insights = careerInsights(career, t);
 
   return (
     <main className={styles.page}>
-      <Link href="/players" className={styles.back}>← Players</Link>
+      <Link href="/players" className={styles.back}>← {t("players")}</Link>
 
       <div>
         <h1 className={styles.title}>{career.name}</h1>
         <p className={styles.subtitle}>
-          {career.matches} {career.matches === 1 ? "match" : "matches"} ·{" "}
+          {fill(t(career.matches === 1 ? "matchCountOne" : "matchCount"), { n: career.matches })} ·{" "}
           {career.appearances[career.appearances.length - 1]?.venue ?? "—"}
         </p>
       </div>
@@ -67,11 +66,11 @@ export default function PlayerPage({
       <div className={styles.headline}>
         <div className={styles.figure}>
           <span className={`${styles.figureValue} tabular`}>{career.batting.runs}</span>
-          <span className={styles.figureLabel}>runs</span>
+          <span className={styles.figureLabel}>{t("runs")}</span>
         </div>
         <div className={styles.figure}>
           <span className={`${styles.figureValue} tabular`}>{career.bowling.wickets}</span>
-          <span className={styles.figureLabel}>wickets</span>
+          <span className={styles.figureLabel}>{t("wickets")}</span>
         </div>
         <div className={styles.figure}>
           <span className={`${styles.figureValue} tabular`}>
@@ -79,15 +78,15 @@ export default function PlayerPage({
               ? "—"
               : `${career.batting.best}${career.batting.bestNotOut ? "*" : ""}`}
           </span>
-          <span className={styles.figureLabel}>best score</span>
+          <span className={styles.figureLabel}>{t("bestScore")}</span>
         </div>
       </div>
 
       <section className={styles.inningsCard} aria-labelledby="insights-heading">
-        <h2 id="insights-heading" className={styles.inningsTitle}>What the numbers say</h2>
+        <h2 id="insights-heading" className={styles.inningsTitle}>{t("whatNumbersSay")}</h2>
         {insights.battingForm.length > 0 && (
           <div>
-            <p className={styles.sectionLabel}>Last innings, newest on the right</p>
+            <p className={styles.sectionLabel}>{t("lastInnings")}</p>
             <ol className={`${pub.form} tabular`}>
               {insights.battingForm.map((score, i) => <li key={i}>{score}</li>)}
             </ol>
@@ -95,7 +94,7 @@ export default function PlayerPage({
         )}
         {insights.bowlingForm.length > 0 && (
           <div>
-            <p className={styles.sectionLabel}>Last spells, wickets/runs</p>
+            <p className={styles.sectionLabel}>{t("lastSpells")}</p>
             <ol className={`${pub.form} tabular`}>
               {insights.bowlingForm.map((spell, i) => <li key={i}>{spell}</li>)}
             </ol>
@@ -107,15 +106,13 @@ export default function PlayerPage({
           </ul>
         )}
         {insights.thin && (
-          <p className={styles.empty}>
-            Three matches or more, and this starts to say something worth trusting.
-          </p>
+          <p className={styles.empty}>{t("thinRecord")}</p>
         )}
       </section>
 
       <div className={styles.pair}>
         <div>
-          <p className={styles.sectionLabel}>Batting</p>
+          <p className={styles.sectionLabel}>{t("batting")}</p>
           <div className={styles.tableScroll}><table className={`${styles.table} tabular`}>
             <tbody>
               <tr><td>{t("innings")}</td><td>{career.batting.innings}</td></tr>
@@ -132,7 +129,7 @@ export default function PlayerPage({
         </div>
 
         <div>
-          <p className={styles.sectionLabel}>Bowling</p>
+          <p className={styles.sectionLabel}>{t("bowling")}</p>
           <div className={styles.tableScroll}><table className={`${styles.table} tabular`}>
             <tbody>
               <tr><td>{t("innings")}</td><td>{career.bowling.innings}</td></tr>
@@ -149,7 +146,7 @@ export default function PlayerPage({
       </div>
 
       <div>
-        <p className={styles.sectionLabel}>Every match</p>
+        <p className={styles.sectionLabel}>{t("everyMatch")}</p>
         <div className={styles.tableScroll}><table className={`${styles.table} tabular`}>
           <thead>
             <tr>
