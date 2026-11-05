@@ -5,9 +5,9 @@
 ## The problem
 
 A twenty-over match is 240 deliveries. At a local ground, someone writes every one of
-them down, head bent, for three hours, while their friends play. So most club and gully
-cricketers end up with no record of what they have done. Scoring apps exist, but they
-still ask one person to stop watching and tap a phone for every ball.
+them down, head bent, for three hours, while their friends play. Whether it is a paper
+book or a phone, one person misses the match to keep the record, and when nobody will,
+the players are left with no record of what they have done.
 
 ## The solution
 
