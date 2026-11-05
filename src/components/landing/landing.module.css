@@ -52,7 +52,7 @@
 
 /* A flat painted sun behind the ball, the one poster shape on the page. */
 .sun {
-  --size: min(62vmin, 620px);
+  --size: min(62vmin, 42vw, 620px);
   position: absolute;
   z-index: 1;
   width: var(--size);
@@ -64,13 +64,28 @@
   margin-top: calc(var(--size) / -2);
 }
 
-@media (max-width: 699px) {
+/*
+ * Too narrow for sun and copy side by side, so the sun takes the corner beside
+ * the headline. The headline is set to 11ch, which leaves that corner free at
+ * every width here, and the paragraph starts below it. Anywhere lower and white
+ * text runs across marigold.
+ */
+@media (max-width: 999px) {
+  .delivery {
+    --corner-size: min(40vw, 38svh);
+    --corner-top: 72px;
+  }
+
   .sun {
-    --size: 58vw;
-    right: -12vw;
-    top: auto;
-    bottom: 3svh;
+    --size: var(--corner-size);
+    right: -8vw;
+    top: var(--corner-top);
     margin-top: 0;
+  }
+
+  /* The ball covers it here, and a phone has nothing to hover anyway. */
+  .spinHint {
+    display: none;
   }
 }
 
@@ -248,14 +263,21 @@
   transform: translate(25vw, -11svh) scale(0.34);
 }
 
+@media (max-width: 999px) {
+  /* Centred on the sun in its corner. */
+  .deliveryBall {
+    transform: translate(
+        calc(58vw - var(--corner-size) / 2),
+        calc(var(--corner-top) + var(--corner-size) / 2 - 50svh)
+      )
+      scale(0.26);
+  }
+}
+
 @media (max-width: 699px) {
   .pitchShadow {
     left: calc(50% + 12vw);
     top: calc(50% + 30svh + 26vmin);
-  }
-
-  .deliveryBall {
-    transform: translate(33vw, 38svh) scale(0.24);
   }
 
   .delivery {

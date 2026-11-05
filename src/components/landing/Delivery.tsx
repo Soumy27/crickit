@@ -253,7 +253,7 @@ export function Delivery() {
             </Link>
             <a href="#try" className={styles.secondary}>Try it first</a>
           </div>
-          <p className={styles.heroNote}>Limited overs with DLS rain rules, or a four-innings Test. No account, and your matches stay on this device.</p>
+          <p className={styles.heroNote}>Limited overs with DLS rain rules, or a four-innings Test. No account, and your matches stay on this device unless you share them.</p>
         </div>
 
         <div className={styles.leather} aria-hidden />

@@ -10,7 +10,7 @@ out to bat.
 Built for **The Great Indian AI Internship Challenge** on Gnani's speech
 platform: **Prisma v3.0** for recognition and **Timbre v3.0** for synthesis.
 
-**Try it:** <https://crickit-pink.vercel.app>
+**Try it:** <https://crickit-pink.vercel.app> · **One-page pitch:** [docs/PITCH.md](docs/PITCH.md)
 
 ## Running it
 
