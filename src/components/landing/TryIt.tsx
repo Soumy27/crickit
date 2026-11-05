@@ -119,7 +119,7 @@ export function TryIt() {
     body.append("hint", uiLanguage);
 
     try {
-      const res = await fetch("/api/stt", { method: "POST", body });
+      const res = await fetch("/api/stt", { method: "POST", body, signal: AbortSignal.timeout(15000) });
       const data = await res.json();
       if (!res.ok) {
         setNote(

@@ -182,7 +182,8 @@ export function Scorer({ matchId }: { matchId: string }) {
     form.append("hint", uiLanguage);
 
     try {
-      const res = await fetch("/api/stt", { method: "POST", body: form });
+      // A stalled request must not hold the mic: the catch below hands it back for the next ball.
+      const res = await fetch("/api/stt", { method: "POST", body: form, signal: AbortSignal.timeout(15000) });
       const body = (await res.json()) as {
         transcript?: string;
         parse?: ParseOutcome;
